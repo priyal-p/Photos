@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>queryParams</key>
+	<dict>
+		<key>extras</key>
+		<string>url_z,date_taken</string>
+		<key>format</key>
+		<string>json</string>
+		<key>nojsoncallback</key>
+		<string>1</string>
+	</dict>
+	<key>flickrResource</key>
+	<dict>
+		<key>host</key>
+		<string>https://api.flickr.com/services/rest</string>
+		<key>proxy</key>
+		<dict>
+			<key>interestingPhotos</key>
+			<string>flickr.interestingness.getList</string>
+			<key>getRecent</key>
+			<string>flickr.photos.getRecent</string>
+		</dict>
+	</dict>
+</dict>
+</plist>
