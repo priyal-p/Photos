@@ -43,6 +43,8 @@ class FlickrAPI {
         return PropertyListHandling().getAPIPropertyListData()
     }()
     
+    private let apiKey = ""
+    
     func getURL(for resource: EndPoint, additionalParams: [String: String] = [:]) -> URL? {
         if let commonParams = propertyListData?["queryParams"] as? [String: String],
            let resources = propertyListData?["flickrResource"] as? [String: Any],
