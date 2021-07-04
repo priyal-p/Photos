@@ -33,7 +33,9 @@ enum FlickrAPIError: Error {
     case apiRequestError
 }
 
+/// Handles Flickr API URL creation and response
 class FlickrAPI {
+    // MARK:- FlickrAPI Initializer
     let dateFormatterUtility : DateFormatterUtility
     init(dateFormatterUtility : DateFormatterUtility = DateFormatterUtility()) {
         self.dateFormatterUtility = dateFormatterUtility
@@ -43,20 +45,35 @@ class FlickrAPI {
         return PropertyListHandling().getAPIPropertyListData()
     }()
     
-    private let apiKey = ""
+    // MARK:- Constants
+    enum PropertyListConstants {
+        static let queryParams = "queryParams"
+        static let resources = "flickrResource"
+        static let proxy = "proxy"
+        static let host = "host"
+    }
     
-    func getURL(for resource: EndPoint, additionalParams: [String: String] = [:]) -> URL? {
-        if let commonParams = propertyListData?["queryParams"] as? [String: String],
-           let resources = propertyListData?["flickrResource"] as? [String: Any],
-           let proxy = resources["proxy"] as? [String: String],
+    enum BaseParamsConstants {
+        static let method = "method"
+        static let apiKey = "api_key"
+        #warning("Add API Key Value")
+        static let apiKeyValue = ""
+    }
+    
+    // MARK:- Create API URL
+    func getURL(for resource: EndPoint,
+                additionalParams: [String: String] = [:]) -> URL? {
+        if let commonParams = propertyListData?[PropertyListConstants.queryParams] as? [String: String],
+           let resources = propertyListData?[PropertyListConstants.resources] as? [String: Any],
+           let proxy = resources[PropertyListConstants.proxy] as? [String: String],
            let path = proxy[resource.rawValue],
-           let host = resources["host"] as? String {
+           let host = resources[PropertyListConstants.host] as? String {
             var components = URLComponents(string: host)
             var queryParams = [URLQueryItem]()
             
             let baseParams = [
-                "method": path,
-                "api_key": apiKey
+                BaseParamsConstants.method : path,
+                BaseParamsConstants.apiKey: BaseParamsConstants.apiKeyValue
             ]
             
             for (key, value) in baseParams {
@@ -74,12 +91,13 @@ class FlickrAPI {
             }
             
             components?.queryItems = queryParams
-            Logger.log.logDynamic(components?.url?.debugDescription ?? "")
+            Logger.log.logDynamic(components?.url?.debugDescription ?? String())
             return components?.url
         }
         return nil
     }
     
+    // MARK:- Handle Flickr Response
     func handleFlikrResponse(fromJson data: Data) -> Result<[Photo], Error> {
         do {
             let jsonDecoder = JSONDecoder()

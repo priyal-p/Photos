@@ -7,8 +7,9 @@
 
 import UIKit
 
-class PhotosViewController: UIViewController {
-    @IBOutlet var imageView: UIImageView!
+class PhotosViewController: UIViewController, UICollectionViewDelegate {
+    @IBOutlet var photosCollectionView: UICollectionView!
+    var photoCollectionViewDataSource: PhotoDataSource?
     var photoStore: PhotoStore?
     let photosEndpoint: EndPoint
     init(photosEndpoint: EndPoint = .interestingPhotos) {
@@ -25,6 +26,8 @@ class PhotosViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        photosCollectionView.dataSource = photoCollectionViewDataSource
+        photosCollectionView.delegate = self
         // Initiate Retrieve Photos Request
         photoStore?.retrieve(photos: photosEndpoint) {[weak self] result in
             guard let self = self else {
@@ -33,23 +36,55 @@ class PhotosViewController: UIViewController {
             switch result {
             case let .success(photos):
                 Logger.log.logDynamic("Successfully Retrieved \(photos.count) Photos")
-                if let photo = photos.first {
-                    self.updateImageView(for: photo)
-                }
+                self.photoCollectionViewDataSource?.photos = photos
             case .failure(let error):
                 Logger.log.logDynamic("\(error)")
+                self.photoCollectionViewDataSource?.photos.removeAll()
             }
+            self.photosCollectionView.reloadSections(IndexSet(integer: 0))
         }
     }
+}
 
-    func updateImageView(for photo: Photo) {
-        photoStore?.retrievePhotoImage(for: photo, completion: { result in
-            switch result {
-            case let .success(image):
-                self.imageView.image = image
-            case .failure(let error):
-                Logger.log.logDynamic("\(error)")
+extension PhotosViewController {
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if let photo = photoCollectionViewDataSource?.photos[indexPath.row] {
+            photoStore?.retrievePhotoImage(for: photo, completion: { result in
+                guard let photoIndex = self.photoCollectionViewDataSource?.photos.firstIndex(of: photo), case let .success(image) = result else {
+                    return
+                }
+                let photoIndexPath = IndexPath(item: photoIndex, section: 0)
+                if let cell = self.photosCollectionView.cellForItem(at: photoIndexPath) as? PhotoCollectionViewCell {
+                    cell.updateCell(imageDisplayed: image)
+                }
+            })
+        }
+    }
+}
+
+extension PhotosViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width = photosCollectionView.bounds.width / 4.0
+        let height = width
+        return CGSize(width: width, height: height)
+    }
+}
+
+extension PhotosViewController {
+    enum SegueIdentifierConstants {
+        static let showPhotoInfoViewController = "showPhoto"
+    }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        switch segue.identifier {
+        case SegueIdentifierConstants.showPhotoInfoViewController:
+            if let selectedPhotoIndex = photosCollectionView.indexPathsForSelectedItems?.first {
+                let photo = photoCollectionViewDataSource?.photos[selectedPhotoIndex.row]
+                let destinationViewController = segue.destination as? PhotoInfoViewController
+                destinationViewController?.photo = photo
+                destinationViewController?.photoStore = photoStore
             }
-        })
+        default:
+            preconditionFailure("Unexpected segue identifier")
+        }
     }
 }

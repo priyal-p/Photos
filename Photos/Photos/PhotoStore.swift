@@ -13,11 +13,13 @@ enum PhotosError: Error {
 }
 
 class PhotoStore {
+    let imageStore = ImageStore()
     private let session: URLSession = {
         let configuration = URLSessionConfiguration.default
         return URLSession(configuration: configuration)
     }()
     
+    /// Retrieval of Photos from Flickr API response
     func retrieve(photos endpointPhotos: EndPoint, completion: @escaping (Result<[Photo], Error>) -> Void) {
         guard let url = FlickrAPI().getURL(for: endpointPhotos) else {
             return
@@ -45,8 +47,18 @@ class PhotoStore {
         }
         return FlickrAPI().handleFlikrResponse(fromJson: jsonData)
     }
-    
+}
+
+/// Retrieval of Image from Photos
+extension PhotoStore {
     func retrievePhotoImage(for photo: Photo, completion: @escaping (Result<UIImage, Error>) -> Void) {
+        let photoKey = photo.photoId
+        if let imageInCache = imageStore.image(forKey: photoKey) {
+            OperationQueue.main.addOperation {
+                completion(.success(imageInCache))
+            }
+            return
+        }
         guard let photoURL = photo.remoteURL else {
             completion(.failure(PhotosError.invalidPhotoURL))
             return
@@ -64,6 +76,9 @@ class PhotoStore {
                 """)
             
             let result = self.handlePhotoImageDownload(data: data, error: error)
+            if case let .success(image) = result {
+                self.imageStore.setImage(image, forKey: photoKey)
+            }
             OperationQueue.main.addOperation {
                 completion(result)
             }

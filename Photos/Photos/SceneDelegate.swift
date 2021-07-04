@@ -20,6 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let rootViewController = window?.rootViewController as? UINavigationController
         let photosViewController = rootViewController?.topViewController as? PhotosViewController
         photosViewController?.photoStore = PhotoStore()
+        photosViewController?.photoCollectionViewDataSource = PhotoDataSource()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

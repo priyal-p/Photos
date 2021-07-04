@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F20804FE2691EA7100BF5592 /* PhotoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20804FD2691EA7100BF5592 /* PhotoCollectionViewCell.swift */; };
+		F20805002691F72100BF5592 /* ImageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20804FF2691F72100BF5592 /* ImageStore.swift */; };
 		F229862E26919ACF00AB3542 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F229862D26919ACF00AB3542 /* AppDelegate.swift */; };
 		F229863026919ACF00AB3542 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F229862F26919ACF00AB3542 /* SceneDelegate.swift */; };
 		F229863226919ACF00AB3542 /* PhotosViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F229863126919ACF00AB3542 /* PhotosViewController.swift */; };
@@ -23,6 +25,8 @@
 		F22986692691BBF300AB3542 /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = F22986682691BBF300AB3542 /* Photo.swift */; };
 		F229866C2691BD8800AB3542 /* Data+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F229866B2691BD8800AB3542 /* Data+Extension.swift */; };
 		F229866E2691C96200AB3542 /* DateFormatterUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = F229866D2691C96200AB3542 /* DateFormatterUtility.swift */; };
+		F23414372691E5330071D847 /* PhotoDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = F23414362691E5330071D847 /* PhotoDataSource.swift */; };
+		F2C62E68269227E800F810F0 /* PhotoInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2C62E67269227E800F810F0 /* PhotoInfoViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +47,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F20804FD2691EA7100BF5592 /* PhotoCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCollectionViewCell.swift; sourceTree = "<group>"; };
+		F20804FF2691F72100BF5592 /* ImageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStore.swift; sourceTree = "<group>"; };
 		F229862A26919ACF00AB3542 /* Photos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Photos.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F229862D26919ACF00AB3542 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F229862F26919ACF00AB3542 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -65,6 +71,8 @@
 		F22986682691BBF300AB3542 /* Photo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Photo.swift; sourceTree = "<group>"; };
 		F229866B2691BD8800AB3542 /* Data+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extension.swift"; sourceTree = "<group>"; };
 		F229866D2691C96200AB3542 /* DateFormatterUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatterUtility.swift; sourceTree = "<group>"; };
+		F23414362691E5330071D847 /* PhotoDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDataSource.swift; sourceTree = "<group>"; };
+		F2C62E67269227E800F810F0 /* PhotoInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoInfoViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +136,10 @@
 				F229865F26919CA900AB3542 /* API.plist */,
 				F22986662691B83200AB3542 /* PhotoStore.swift */,
 				F22986682691BBF300AB3542 /* Photo.swift */,
+				F23414362691E5330071D847 /* PhotoDataSource.swift */,
+				F20804FD2691EA7100BF5592 /* PhotoCollectionViewCell.swift */,
+				F20804FF2691F72100BF5592 /* ImageStore.swift */,
+				F2C62E67269227E800F810F0 /* PhotoInfoViewController.swift */,
 			);
 			path = Photos;
 			sourceTree = "<group>";
@@ -304,8 +316,12 @@
 				F22986652691B16E00AB3542 /* Logger.swift in Sources */,
 				F229866E2691C96200AB3542 /* DateFormatterUtility.swift in Sources */,
 				F229863226919ACF00AB3542 /* PhotosViewController.swift in Sources */,
+				F20804FE2691EA7100BF5592 /* PhotoCollectionViewCell.swift in Sources */,
 				F22986672691B83200AB3542 /* PhotoStore.swift in Sources */,
 				F229862E26919ACF00AB3542 /* AppDelegate.swift in Sources */,
+				F20805002691F72100BF5592 /* ImageStore.swift in Sources */,
+				F2C62E68269227E800F810F0 /* PhotoInfoViewController.swift in Sources */,
+				F23414372691E5330071D847 /* PhotoDataSource.swift in Sources */,
 				F229863026919ACF00AB3542 /* SceneDelegate.swift in Sources */,
 				F229865E26919C6000AB3542 /* FlickrAPI.swift in Sources */,
 				F229866C2691BD8800AB3542 /* Data+Extension.swift in Sources */,

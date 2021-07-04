@@ -6,7 +6,7 @@
 //
 
 import Foundation
-class Photo: Codable {
+class Photo: Codable, Equatable {
     let photoId: String
     let photoTitle: String
     let remoteURL: URL?
@@ -25,5 +25,11 @@ class Photo: Codable {
         self.remoteURL = remoteURL
         self.dateTaken = dateTaken
     }
-    
+}
+
+// MARK:- Conforms Equatable
+extension Photo {
+    static func == (lhs: Photo, rhs: Photo) -> Bool {
+        lhs.photoId == rhs.photoId
+    }
 }
