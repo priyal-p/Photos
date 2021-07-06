@@ -28,6 +28,9 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate {
         
         photosCollectionView.dataSource = photoCollectionViewDataSource
         photosCollectionView.delegate = self
+        
+        updateDataSource()
+        
         // Initiate Retrieve Photos Request
         photoStore?.retrieve(photos: photosEndpoint) {[weak self] result in
             guard let self = self else {
@@ -39,10 +42,31 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate {
                 self.photoCollectionViewDataSource?.photos = photos
             case .failure(let error):
                 Logger.log.logDynamic("\(error)")
-                self.photoCollectionViewDataSource?.photos.removeAll()
+                
+                // Below code is commented to show photos from disk if unable to fetch from API
+                //self.photoCollectionViewDataSource?.photos.removeAll()
             }
             self.photosCollectionView.reloadSections(IndexSet(integer: 0))
         }
+    }
+}
+
+extension PhotosViewController {
+    func updateDataSource() {
+        photoStore?.fetchAllPhotos(completion: {[weak self] result in
+            guard let self = self else {
+                return
+            }
+            
+            switch result {
+            case let .success(photos):
+                self.photoCollectionViewDataSource?.photos = photos
+            case let .failure(error):
+                self.photoCollectionViewDataSource?.photos.removeAll()
+                Logger.log.logDynamic(error.localizedDescription)
+            }
+            self.photosCollectionView.reloadSections(IndexSet(integer: 0))
+        })
     }
 }
 

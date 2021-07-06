@@ -98,7 +98,7 @@ class FlickrAPI {
     }
     
     // MARK:- Handle Flickr Response
-    func handleFlikrResponse(fromJson data: Data) -> Result<[Photo], Error> {
+    func handleFlikrResponse(fromJson data: Data) -> Result<[FlickrPhoto], Error> {
         do {
             let jsonDecoder = JSONDecoder()
             jsonDecoder.dateDecodingStrategy = .formatted(dateFormatterUtility.dateFormatter)

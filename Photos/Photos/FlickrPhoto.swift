@@ -6,7 +6,8 @@
 //
 
 import Foundation
-class Photo: Codable, Equatable {
+/// Supports JSON
+class FlickrPhoto: Codable, Equatable {
     let photoId: String
     let photoTitle: String
     let remoteURL: URL?
@@ -28,8 +29,8 @@ class Photo: Codable, Equatable {
 }
 
 // MARK:- Conforms Equatable
-extension Photo {
-    static func == (lhs: Photo, rhs: Photo) -> Bool {
+extension FlickrPhoto {
+    static func == (lhs: FlickrPhoto, rhs: FlickrPhoto) -> Bool {
         lhs.photoId == rhs.photoId
     }
 }
