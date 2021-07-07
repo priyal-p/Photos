@@ -18,6 +18,8 @@ class TagDataSource: NSObject, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let tagTableViewCell = tableView.dequeueReusableCell(withIdentifier: "TagTableViewCell", for: indexPath)
         tagTableViewCell.textLabel?.text = tags[indexPath.row].name
+        tagTableViewCell.accessibilityTraits = [.button]
+        tagTableViewCell.accessibilityHint = "Toggles Selection"
         return tagTableViewCell
     }
     

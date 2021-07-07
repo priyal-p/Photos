@@ -21,6 +21,7 @@ class PhotoDataSource: NSObject, UICollectionViewDataSource {
         let cellIdentifier = Constants.collectionCellIdentifier.rawValue
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIdentifier, for: indexPath) as? PhotoCollectionViewCell
         cell?.updateCell(imageDisplayed: nil)
+        cell?.photoDescription = photos[indexPath.row].photoTitle
         return cell ?? UICollectionViewCell()
     }
 }

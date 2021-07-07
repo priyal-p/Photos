@@ -19,6 +19,7 @@ class PhotoInfoViewController: UIViewController {
         if let photo = photo {
             retrievePhoto(photo: photo)
         }
+        imageView.accessibilityLabel = photo?.photoTitle
     }
     
     /// Retrieve and display selected Photo Information
