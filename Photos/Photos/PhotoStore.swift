@@ -43,16 +43,10 @@ class PhotoStore {
                 🛫 ************************************** \(#function)
                                 \n\(response.debugDescription)
                 """)
-            var result = self.handlePhotosResponse(data: data, error: error)
-            if case .success = result {
-                do {
-                    try self.persistentContainer.viewContext.save()
-                } catch {
-                    result = .failure(error)
+            self.handlePhotosResponse(data: data, error: error) { result in
+                OperationQueue.main.addOperation {
+                    completion(result)
                 }
-            }
-            OperationQueue.main.addOperation {
-                completion(result)
             }
         }
         task.resume()
@@ -73,43 +67,55 @@ class PhotoStore {
         }
     }
     
-    private func handlePhotosResponse(data: Data?, error: Error?) -> Result<[Photo], Error> {
+    private func handlePhotosResponse(data: Data?, error: Error?, completion: @escaping (Result<[Photo], Error>) -> Void) {
         guard  let jsonData = data else {
-            return .failure(error ?? FlickrAPIError.unexpectedError)
+            completion(.failure(error ?? FlickrAPIError.unexpectedError))
+            return
         }
-        let context = persistentContainer.viewContext
-        
-        switch FlickrAPI().handleFlikrResponse(fromJson: jsonData) {
-        case let .success(flickrPhotos):
-            let photos: [Photo] = flickrPhotos.compactMap { flickrPhoto -> Photo? in
-                let fetchReuest: NSFetchRequest<Photo> = Photo.fetchRequest()
-                fetchReuest.predicate = NSPredicate(format: "\(#keyPath(Photo.photoId)) == \(flickrPhoto.photoId)")
-                var fetchedPhotos: [Photo]?
-                context.performAndWait {
-                    do {
-                        fetchedPhotos = try fetchReuest.execute()
-                    } catch {
-                        Logger.log.logDynamic("\(error)")
+        persistentContainer.performBackgroundTask { context in
+            switch FlickrAPI().handleFlikrResponse(fromJson: jsonData) {
+            case let .success(flickrPhotos):
+                let photos: [Photo] = flickrPhotos.compactMap { flickrPhoto -> Photo? in
+                    let fetchReuest: NSFetchRequest<Photo> = Photo.fetchRequest()
+                    fetchReuest.predicate = NSPredicate(format: "\(#keyPath(Photo.photoId)) == \(flickrPhoto.photoId)")
+                    var fetchedPhotos: [Photo]?
+                    context.performAndWait {
+                        do {
+                            fetchedPhotos = try fetchReuest.execute()
+                        } catch {
+                            Logger.log.logDynamic("\(error)")
+                        }
                     }
+                    
+                    if let existingPhoto = fetchedPhotos?.first {
+                        return existingPhoto
+                    }
+                    
+                    var photo: Photo?
+                    context.performAndWait {
+                        photo = Photo(context: context)
+                        photo?.photoId = flickrPhoto.photoId
+                        photo?.dateTaken = flickrPhoto.dateTaken
+                        photo?.photoTitle = flickrPhoto.photoTitle
+                        photo?.remoteURL = flickrPhoto.remoteURL
+                    }
+                    return photo
+                }
+                do {
+                    try context.save()
+                } catch {
+                    print("Error saving to Core Data \(error)")
+                    completion(.failure(error))
+                    return
                 }
                 
-                if let existingPhoto = fetchedPhotos?.first {
-                    return existingPhoto
-                }
-                
-                var photo: Photo?
-                context.performAndWait {
-                    photo = Photo(context: context)
-                    photo?.photoId = flickrPhoto.photoId
-                    photo?.dateTaken = flickrPhoto.dateTaken
-                    photo?.photoTitle = flickrPhoto.photoTitle
-                    photo?.remoteURL = flickrPhoto.remoteURL
-                }
-                return photo
+                let photoIds = photos.map({$0.objectID})
+                let viewContext = self.persistentContainer.viewContext
+                let viewContextPhotos = photoIds.compactMap { viewContext.object(with: $0)} as? [Photo]
+                return completion(.success(viewContextPhotos ?? []))
+            case let .failure(error):
+                return completion(.failure(error))
             }
-            return .success(photos)
-        case let .failure(error):
-            return .failure(error)
         }
     }
 }
@@ -161,5 +167,23 @@ extension PhotoStore {
             return .failure(PhotosError.imageCreationError)
         }
         return .success(image)
+    }
+}
+
+// Support for Tags
+extension PhotoStore {
+    func fetchAllTags(completion: @escaping (Result<[Tag], Error>) -> Void) {
+        let viewContext = persistentContainer.viewContext
+        let fetchRequest: NSFetchRequest = Tag.fetchRequest()
+        let sortByName: NSSortDescriptor = NSSortDescriptor(key: #keyPath(Tag.name), ascending: true)
+        fetchRequest.sortDescriptors = [sortByName]
+        viewContext.perform {
+            do {
+                let tags = try fetchRequest.execute()
+                completion(.success(tags))
+            } catch {
+                completion(.failure(error))
+            }
+        }
     }
 }

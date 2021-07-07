@@ -34,3 +34,20 @@ class PhotoInfoViewController: UIViewController {
         })
     }
 }
+
+extension PhotoInfoViewController {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        switch segue.identifier {
+        case "showTags":
+            let navigationViewController = segue.destination as? UINavigationController
+            
+            let tagsViewController = navigationViewController?.topViewController as? TagsViewController
+            
+            tagsViewController?.photo = photo
+            tagsViewController?.photoStore = photoStore
+            
+        default:
+            preconditionFailure("Unidentified Segue Identifier")
+        }
+    }
+}
