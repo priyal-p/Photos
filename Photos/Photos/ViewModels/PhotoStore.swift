@@ -103,6 +103,8 @@ class PhotoStore {
                 }
                 do {
                     try context.save()
+                    let paths = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)
+                    Logger.log.logDynamic("Documents Directory Path \(paths[0])")
                 } catch {
                     print("Error saving to Core Data \(error)")
                     completion(.failure(error))

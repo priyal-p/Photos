@@ -7,48 +7,49 @@
 
 import UIKit
 class PhotoInfoViewController: UIViewController {
-    @IBOutlet var imageView: UIImageView!
+    @IBOutlet weak var imageView: UIImageView!
     var photo: Photo? {
         didSet {
             navigationItem.title = photo?.photoTitle
         }
     }
-    var photoStore: PhotoStore?
+    
+    var viewModel: PhotoInfoViewModel?
+    
+    enum Constants {
+        static let showTags = "showTags"
+    }
     
     override func viewDidLoad() {
+        viewModel?.delegate = self
         if let photo = photo {
             retrievePhoto(photo: photo)
         }
         imageView.accessibilityLabel = photo?.photoTitle
     }
     
-    /// Retrieve and display selected Photo Information
+    /// Retrieve image for selected photo
     /// - Parameter photo: Selected Photo
     func retrievePhoto(photo: Photo) {
-        photoStore?.retrievePhotoImage(for: photo, completion: { result in
-            switch result {
-            case let .success(image):
-                self.imageView.image = image
-            case .failure(let error):
-                Logger.log.logDynamic("Error fetching image for photo: \(error)")
-            }
-        })
+        viewModel?.fetchImage(for: photo)
     }
 }
 
 extension PhotoInfoViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         switch segue.identifier {
-        case "showTags":
+        case Constants.showTags:
             let navigationViewController = segue.destination as? UINavigationController
-            
             let tagsViewController = navigationViewController?.topViewController as? TagsViewController
-            
             tagsViewController?.photo = photo
-            tagsViewController?.photoStore = photoStore
-            
         default:
             preconditionFailure("Unidentified Segue Identifier")
         }
+    }
+}
+
+extension PhotoInfoViewController: PhotoInfoViewDelegate {
+    func showImage(_ image: UIImage) {
+        self.imageView.image = image
     }
 }

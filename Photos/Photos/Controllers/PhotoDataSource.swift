@@ -9,19 +9,25 @@ import UIKit
 
 /// Photo Collection Data Source
 class PhotoDataSource: NSObject, UICollectionViewDataSource {
-    var photos = [Photo]()
     enum Constants: String {
         case collectionCellIdentifier = "PhotoCollectionViewCell"
     }
+    
+    let viewModel: PhotosViewModel
+    
+    init(viewModel: PhotosViewModel) {
+        self.viewModel = viewModel
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return photos.count
+        return viewModel.numberOfPhotos()
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cellIdentifier = Constants.collectionCellIdentifier.rawValue
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIdentifier, for: indexPath) as? PhotoCollectionViewCell
         cell?.updateCell(imageDisplayed: nil)
-        cell?.photoDescription = photos[indexPath.row].photoTitle
+        cell?.photoDescription = viewModel.photo(at: indexPath.row)?.photoTitle
         return cell ?? UICollectionViewCell()
     }
 }

@@ -99,6 +99,7 @@ class FlickrAPI {
     
     // MARK:- Handle Flickr Response
     func handleFlikrResponse(fromJson data: Data) -> Result<[FlickrPhoto], Error> {
+        Logger.log.logDynamic("\(data.prettyPrintedJSONData ?? "")")
         do {
             let jsonDecoder = JSONDecoder()
             jsonDecoder.dateDecodingStrategy = .formatted(dateFormatterUtility.dateFormatter)

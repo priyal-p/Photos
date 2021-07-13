@@ -68,7 +68,7 @@ class TagsViewController: UITableViewController {
                 }
                 
             case let .failure(error):
-                Logger.log.logDynamic(" Error Fetching Logs: \(error)")
+                Logger.log.logDynamic("Error Fetching Logs: \(error)")
             }
             self.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
         })
